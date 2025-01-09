@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({
     origin: ['http://localhost:5173', 'https://hospital-management-sigma-three.vercel.app'], // Replace with your frontend URL
+    credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
