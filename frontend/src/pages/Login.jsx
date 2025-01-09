@@ -1,25 +1,23 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [loginDetails, setLoginDetails] = useState({ email: "", password: "" });
+  const [loginDetails, setLoginDetails] = useState({ email: "abesh@gmail.com", password: "abesh" });
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLoginDetails({ ...loginDetails, [name]: value });
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async(e) => {
     e.preventDefault();
-
-    // Replace this with actual login logic (e.g., API call)
-    if (loginDetails.email === "admin@example.com" && loginDetails.password === "password123") {
-      console.log("Login successful!");
-      setErrorMessage(""); // Clear error
-      // Redirect or perform post-login actions here
-    } else {
-      setErrorMessage("Invalid email or password. Please try again.");
-    }
+    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/login`, loginDetails);
+    console.log(res)
+    localStorage.setItem("token", res.data.token);
+    navigate("/");
   };
 
   return (

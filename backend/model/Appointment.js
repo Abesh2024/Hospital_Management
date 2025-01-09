@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
 const appointmentSchema = new mongoose.Schema({
-  patientName: String,
-  doctorName: String,
-  timeSlot: String,
+  patient: String,
+  doctor: String,
+  time: String,
   status: { type: String, enum: ['Booked', 'Completed', 'Canceled'], default: 'Booked' },
 });
 

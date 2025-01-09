@@ -18,13 +18,16 @@ export const addPatientToQueue = async (req, res) => {
 
 export const removePatientFromQueue = async (req, res) => {
   const { id } = req.params;
+  console.log(id, "idddddddiiii")
   await Queue.findByIdAndDelete(id);
-  res.sendStatus(200);
+  return res.status(200).json({
+    message: 'Patient removed from the queue',
+  });
 };
 
 export const updateQueue = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  await Queue.findByIdAndUpdate(id, { status });
-  res.sendStatus(200);
+  const updatedQueue = await Queue.findByIdAndUpdate(id, { status });
+  return res.status(200).json({message : "updated" , updatedQueue});
 };

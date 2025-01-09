@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Replace with your frontend URL
+    origin: ['http://localhost:5173'], // Replace with your frontend URL
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +23,7 @@ mongoose
   .catch((err) => console.error(err));
 
 app.use('/api', queueRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/users', userRouter);
+app.use('/api', appointmentRoutes);
+app.use('/api', userRouter);
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

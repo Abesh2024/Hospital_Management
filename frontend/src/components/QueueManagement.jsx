@@ -5,8 +5,8 @@ import { useParams , useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const QueueManagement = () => {
   const [val, setVal] = useState("");
-  const [patients, setPatients] = useState([
-  ]);
+  const [patients, setPatients] = useState([]);
+  console.log(patients);
 
   const status = ["Waiting", "With Doctor", "Completed"];
   const {pathname} = useLocation();
@@ -32,7 +32,7 @@ const QueueManagement = () => {
     };
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/getAllQueue').then((response) => setPatients(response.data));
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/getAllQueue`).then((response) => setPatients(response.data));
   }, []);
 
 const addPatientToQueue = async() => {
@@ -44,7 +44,7 @@ const addPatientToQueue = async() => {
       waitTime: inputVal.wait_time,
     };
 
-    const response = await axios.post('http://localhost:5000/api/queue', newPatient);
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/queue`, newPatient);
     setPatients([...patients, response.data]);
     
       setInputVal({
@@ -53,6 +53,8 @@ const addPatientToQueue = async() => {
         arrival: "",
         waitTime: "",
     });
+
+    setIsModalOpen(false);
   };
 
 const navigate = useNavigate();
@@ -68,11 +70,10 @@ const navigate = useNavigate();
   const handleRemovePatient = async (id) => {
     try {
       // Make API call to delete patient
-      const response = await axios.delete(`http://localhost:5000/api/${id}/remove`);
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/${id}/remove`);
   
       if (response.status === 200) {
-        // Update the state by removing the deleted patient
-        setPatients(patients.filter((patient) => patient.id !== id));
+        setPatients([...patients].filter((patient) => patient._id !== id));
         console.log(`Patient with id ${id} removed successfully.`);
       } else {
         console.error(`Failed to remove patient with id ${id}.`);
@@ -81,6 +82,11 @@ const navigate = useNavigate();
       console.error(`Error removing patient with id ${id}:`, error);
     }
   };
+
+  const filterPatient = (data) => {
+      return data.filter((item)=> item.patient.toLowerCase().includes(val.toLowerCase()));
+  }
+  
 
   return (
     <div className="p-6 bg-gray-900 text-white">
@@ -102,11 +108,13 @@ const navigate = useNavigate();
       </div>
 
     <div className="space-y-4">
-      {patients.map((patient) => (
+      {filterPatient(patients).map((patient) => (
         <PatientRow
-          key={patient.id}
+          key={patient._id}
           patient={patient}
+          patients={patients}
           onRemove={handleRemovePatient}
+          setPatients={setPatients}
         />
       ))}
     </div>

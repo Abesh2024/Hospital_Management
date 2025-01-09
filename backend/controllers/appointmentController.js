@@ -14,18 +14,18 @@ export const cancelAppointment = async (req, res) => {
 // Book a new appointment
 export const bookAppointment = async (req, res) => {
   try {
-    const { patientName, doctorName, timeSlot } = req.body;
+    const { patient, doctor, time } = req.body;
 
     // Validate request body
-    if (!patientName || !doctorName || !timeSlot) {
+    if (!patient || !doctor || !time) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
     // Create a new appointment
     const newAppointment = new Appointment({
-      patientName,
-      doctorName,
-      timeSlot,
+      patient,
+      doctor,
+      time,
       status: 'Booked', // Default status
     });
 
@@ -36,3 +36,12 @@ export const bookAppointment = async (req, res) => {
     res.status(500).json({ message: 'Error booking appointment', error });
   }
 };
+
+
+export const updateAppointment = async(req , res) => {
+   
+     const { id } = req.params;
+     const { status } = req.body;
+    const updatedAppointment = await Appointment.findByIdAndUpdate(id, { status }, { new: true });
+    return res.status(200).json({message : "updated succesfully" , updatedAppointment})
+}

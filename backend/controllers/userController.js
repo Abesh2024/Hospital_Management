@@ -1,5 +1,6 @@
 import UserModel from "../model/UserModel.js";
-import  bcrypt from "bcrypt";
+import  bcrypt, { compareSync } from "bcrypt";
+import jwt from 'jsonwebtoken'
 
 export const signup = async (req, res) => {
     const { username, password } = req.body;
@@ -17,24 +18,19 @@ export const signup = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-    const { username, password } = req.body;
-    if(!username || !password) {
+    const { email, password } = req.body;
+    console.log(email, password);
+    if(!email || !password) {
         return res.json({ message: "Username and password are required" });
     }
-    const user = await UserModel.findOne({ username });
-    if(!user) {
-        return res.json({
-            message: "User does not exist"
-        })
+
+    if(email !== process.env.email && password !== process.env.password) {
+        return res.json({ message: "Invalid username or password" });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if(!isPasswordValid) {
-        return res.json({
-            message: "Invalid password"
-        })
-    }
-    res.json({
+
+    const token = jwt.sign({ email }, "secret");
+    return res.json({
         message: "Login successful",
-        username: user.username
+        token
     })
 }

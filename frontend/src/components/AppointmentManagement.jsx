@@ -1,35 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-
+import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const AppointmentManagement = () => {
-//   const [appointments, setAppointments] = useState([]);
-const appointments = [
-    { id: 1, name: "Alice Brown", doctor: "Dr. Smith", time: "10:00 AM", status: "Booked" },
-    { id: 2, name: "Charlie Davis", doctor: "Dr. Johnson", time: "11:30 AM", status: "Booked" },
-    { id: 3, name: "Eva White", doctor: "Dr. Lee", time: "2:00 PM", status: "Booked" },
-  ];
-
+  const [appointments, setAppointments] = useState([]);
   const {pathname} = useLocation();
   const navigate = useNavigate();
   const doctors = ["Dr. Smith", "Dr. Johnson", "Dr. Lee"];
+  const [newStatus, setNewStatus] = useState("Booked");
 
-  
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/appoinments`).then((response) => setAppointments(response.data));
+  }, []);
 
-//   useEffect(() => {
-//     api.get('/appointments').then((response) => setAppointments(response.data));
-//   }, []);
+const handleStatusChange = async(e , id) => {
+    const newStatus = e.target.value;
+    setNewStatus(newStatus);
+    const res = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/appoinments/${id}`, { status: newStatus }); 
+    setAppointments(appointments.map((appointment) => appointment._id === id ? { ...appointment, status: res.data.updatedAppointment.status} : appointment));
 
-const handleStatusChange = (id, event) => {
-    console.log(`Status for Appointment ${id}: ${event.target.value}`);
   };
-
-//   const cancelAppointment = (id) => {
-//     api.delete(`/appointments/${id}`).then(() => {
-//       setAppointments((prev) => prev.filter((appointment) => appointment._id !== id));
-//     });
-//   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAppointment, setNewAppointment] = useState({
@@ -43,10 +34,26 @@ const handleStatusChange = (id, event) => {
     setNewAppointment({ ...newAppointment, [name]: value });
   };
 
-  const handleScheduleAppointment = () => {
-    console.log("New Appointment Details:", newAppointment);
-    setIsModalOpen(false);
-    // Here, you can add the logic to save the new appointment to the database or update state.
+
+
+  const handleAddAppointment = async () => {
+    console.log("helllllo world")
+    const appointment = {
+      patient: newAppointment.patient,
+      doctor: newAppointment.doctor,
+      time: newAppointment.time,
+    };
+
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/book`, appointment);
+    setAppointments([...appointments, response.data]);
+    
+      setNewAppointment({
+       patient: "",
+        doctor: "",
+        time: "",
+      });
+
+      setIsModalOpen(false);
   };
 
   return (
@@ -73,7 +80,7 @@ const handleStatusChange = (id, event) => {
               className="flex items-center justify-between bg-gray-900 p-4 rounded-md"
             >
               <div>
-                <p className="text-sm font-medium">{appointment.name}</p>
+                <p className="text-sm font-medium">{appointment.patient}</p>
                 <p className="text-xs text-gray-400">{appointment.doctor}</p>
                 <p className="text-xs text-gray-400">{appointment.time}</p>
               </div>
@@ -82,8 +89,8 @@ const handleStatusChange = (id, event) => {
                   {appointment.status}
                 </span>
                 <select
-                  value={appointment.status}
-                  onChange={(e) => console.log(`Status changed: ${e.target.value}`)}
+                  value={newStatus}
+                  onChange={(e) => handleStatusChange(e ,appointment._id)}
                   className="bg-gray-700 text-gray-300 text-sm rounded-md p-1"
                 >
                   <option value="Booked">Booked</option>
@@ -159,7 +166,7 @@ const handleStatusChange = (id, event) => {
             <button
               type="button"
               className="w-full bg-blue-600 text-white py-2 rounded-md"
-              onClick={handleScheduleAppointment}
+              onClick={handleAddAppointment}
             >
               Schedule Appointment
             </button>

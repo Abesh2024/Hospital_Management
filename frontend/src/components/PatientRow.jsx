@@ -1,4 +1,11 @@
-const PatientRow = ({ patient, onRemove }) => {
+import axios from "axios";
+import { useState } from "react";
+
+const PatientRow = ({ patient, patients, onRemove , setPatients }) => {
+  console.log(patient);
+
+   const [newStatus, setNewStatus] = useState(patient.status);
+  
 
     const handlePriorityChange = (event) => {
         // Update the patient's priority here
@@ -6,10 +13,14 @@ const PatientRow = ({ patient, onRemove }) => {
       };
 
 
-      const handleStatusChange = (event) => {
-        // Update the patient's status here
-        console.log(`Status for ${patient.name}: ${event.target.value}`);
+      const handleStatusChange = async(e , id) => {
+        const newStatus = e.target.value;
+        setNewStatus(newStatus);
+        const res = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/${id}`, { status: newStatus });
+        setPatients(patients.map((patient) => patient._id === id ? { ...patient, status: res.data.updatedQueue.status} : patient));
+
       };
+
     return (
       <div className="flex items-center justify-between p-4 bg-gray-800 rounded-md">
         <div className="flex items-center space-x-4">
@@ -23,9 +34,9 @@ const PatientRow = ({ patient, onRemove }) => {
   
         <div className="flex items-center space-x-4">
           <select
-            value={patient.status}
+            value={newStatus}
             className="bg-gray-700 text-gray-300 text-sm rounded-md p-1"
-            onChange={handleStatusChange} // Added onChange
+            onChange={(e) => handleStatusChange(e , patient._id)} // Added onChange
 
           >
             <option>Waiting</option>
@@ -36,7 +47,7 @@ const PatientRow = ({ patient, onRemove }) => {
           <select
             value={patient.priority}
             className="bg-gray-700 text-gray-300 text-sm rounded-md p-1"
-            onChange={handleStatusChange} // Added onChange
+            // onChange={(e) => handleStatusChange(e , patient._id)}
 
           >
             <option>Normal</option>
@@ -44,7 +55,7 @@ const PatientRow = ({ patient, onRemove }) => {
           </select>
   
           <button
-            onClick={() => onRemove(patient.id)}
+            onClick={() => onRemove(patient._id)}
             className="p-2 bg-red-600 rounded-md text-sm"
           >
             X
