@@ -37,6 +37,7 @@ const QueueManagement = () => {
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/getAllQueue`).then((response) => setPatients(response.data));
   }, []);
+console.log(import.meta.env.VITE_API_BASE_URL);
 
 const addPatientToQueue = async() => {
   const newPatient = {
