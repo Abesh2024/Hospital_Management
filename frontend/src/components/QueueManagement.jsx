@@ -19,6 +19,9 @@ const QueueManagement = () => {
       arrival_time: "",
       wait_time: "",
     });
+
+  axios.defaults.withCredentials = true;
+
   
     const handleInputChange = (e) => {
       const { name, value } = e.target;

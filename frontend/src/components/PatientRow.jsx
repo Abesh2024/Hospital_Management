@@ -6,6 +6,7 @@ const PatientRow = ({ patient, patients, onRemove , setPatients }) => {
 
    const [newStatus, setNewStatus] = useState(patient.status);
   
+   axios.defaults.withCredentials = true;
 
     const handlePriorityChange = (event) => {
         // Update the patient's priority here

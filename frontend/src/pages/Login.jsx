@@ -6,6 +6,7 @@ const Login = () => {
   const [loginDetails, setLoginDetails] = useState({ email: "abesh@gmail.com", password: "abesh" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  axios.defaults.withCredentials = true;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -10,6 +10,7 @@ const AppointmentManagement = () => {
   const doctors = ["Dr. Smith", "Dr. Johnson", "Dr. Lee"];
   const [newStatus, setNewStatus] = useState("Booked");
 
+  axios.defaults.withCredentials = true;
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/appoinments`).then((response) => setAppointments(response.data));
   }, []);
