@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = ({setToken}) => {
   const [loginDetails, setLoginDetails] = useState({ email: "abesh@gmail.com", password: "abesh" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ const Login = () => {
     const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/login`, loginDetails);
     console.log(res)
     localStorage.setItem("token", res.data.token);
+    setToken(res.data.token);
     navigate("/");
   };
 
