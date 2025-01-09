@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: [ 'https://hospital-management-sigma-three.vercel.app'], // Replace with your frontend URL
+    origin: [ 'https://hospital-management-sigma-three.vercel.app', "http://localhost:5173"], // Replace with your frontend URL
     credentials: true
 }));
 app.use(express.json());
